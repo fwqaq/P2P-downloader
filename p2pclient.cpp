@@ -142,7 +142,11 @@ class P2pclient{
     }
   
     //线程入口函数
+<<<<<<< HEAD
     void thr_begin(std::string path, uint64_t begin,uint64_t end, int *flag, int fd){
+=======
+    void thr_begin(std::string path, uint64_t begin,uint64_t end, int *flag){
+>>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
       
       //调试信息<
       std::cout << "begin: "<< begin << "end:"<<end<<std::endl; 
@@ -167,6 +171,7 @@ class P2pclient{
           //此时新建存储下载文件目录
           bf::create_directory(DOWNPATH);
         }
+<<<<<<< HEAD
         //在写入文件的时候对文件加上写锁，防止在写入的时候别的线程也在写入或者读取
         
         //使用系统调用接口实现文件的写入
@@ -195,6 +200,27 @@ class P2pclient{
         //  return;
         //}
         //file.close();
+=======
+        //使用文件流写入必须文件存在。所以要创建一个名字相同的文件名
+        int fd = open(downfile.c_str(),O_CREAT,0664);
+        if(fd < 0){
+          std::cerr << "文件创建失败\n";
+        }
+        close(fd);
+        std::fstream file(downfile, std::ios::binary | std::ios::out | std::ios::in);
+        if(!file.is_open()){
+          std::cerr << "文件流打开失败\n";
+          return;
+        }
+        //设置偏移量
+        file.seekp(begin,std::ios::beg);
+        file.write(&res->body[0], res->body.size());
+        if(!file.good()){
+          std::cerr << "文件流出错了\n";
+          return;
+        }
+        file.close();
+>>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
         *flag = 1;
         std::cerr << "片段下载成功\n";
         return;
@@ -236,6 +262,7 @@ class P2pclient{
       flag.resize(size + 1,1);
  	    std::string path = _file_list[file_index];     
       //Range:bytes=begin-ends;
+<<<<<<< HEAD
 		  std::string downfile = DOWNPATH + "/"  +path; 
       //打开文件，不在线程中打开，并且对文件进行加写锁，在下载的时候别人不能读也不能写，
       //在线程中进行数独的读写，传入fd即可
@@ -252,6 +279,8 @@ class P2pclient{
       if(fcntl(fd, F_SETLKW, &lock) < 0){
         std::cerr << "别人正在操作此文件，请稍等\n";
       }
+=======
+>>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
       for(uint64_t i = 0;i <= size; i++){
         start = i * MAXFILE;
         end = (i + 1) * MAXFILE - 1;       
@@ -260,17 +289,24 @@ class P2pclient{
           end = fsize - 1;
         }        
         //创建一个线程去实现传输。并且传递进path是文件的名称
+<<<<<<< HEAD
         threadv[i] = (boost::thread(&P2pclient::thr_begin, this, path, start, end, &flag[i],fd));
+=======
+        threadv[i] = (boost::thread(&P2pclient::thr_begin, this, path, start, end, &flag[i]));
+>>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
       }
       for(int i = 0;i < threadv.size(); i++){
         threadv[i].join();
       }
+<<<<<<< HEAD
       //此时就表示所有线程都结束了，解锁
       lock.l_type = F_UNLCK;
       if(fcntl(fd, F_SETLKW, &lock) < 0){
         std::cerr << "解锁失败\n";
       }
       close(fd);
+=======
+>>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
       //此时判断所有的文件是不是都
       //下载文件失败
       for(int i = 0; i < size;i++){
