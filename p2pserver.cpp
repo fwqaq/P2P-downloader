@@ -2,10 +2,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-<<<<<<< HEAD
 #include <fstream>
-=======
->>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
 #include <boost/filesystem.hpp>
 #include "httplib.h"
 using namespace httplib;
@@ -77,10 +74,7 @@ public:
       return;
     }
     //获取文件的大小
-<<<<<<< HEAD
-    
-=======
->>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
+
     int64_t fsize = bf::file_size(realpath);
     std::cout<< "文件的大小" << fsize << std::endl;
     if(req.method == "HEAD"){
@@ -90,7 +84,6 @@ public:
       return;
     }
     //如果不是HEAD请求，要传送数据
-<<<<<<< HEAD
     //std::ifstream file(realpath, std::ios::binary);
     int fd = open(realpath.c_str(), O_RDONLY);
     if(fd < 0){
@@ -113,7 +106,7 @@ public:
    //    res.status = 500;
     //      return;
    // }
-=======
+/*
     std::ifstream file(realpath,std::ios::binary);
     
     //直接将所有的数据都发送到client中
@@ -122,7 +115,7 @@ public:
         res.status = 500;
         return;
     }
->>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
+*/
     //read：将流中的数据提取到数组中,提取长度是fsize
     //提取头信息中Range的信息，将长度提取出来。bytes=start-end;
     int64_t start = 0;
@@ -134,7 +127,6 @@ public:
     std::cout<<"begin:"<<start <<"end:"<<end<<std::endl;
     int64_t  lsize = end - start + 1;
     std::cout<<"段大小"<<std::endl;
-<<<<<<< HEAD
    //设置偏移量
     int ret = lseek(fd, start, SEEK_SET);
     if(ret < 0){
@@ -168,7 +160,7 @@ public:
 
     //关闭文件描述符
     close(fd);
-=======
+/*
     res.body.resize(lsize);
     file.seekg(start,std::ios::beg);
     file.read(&res.body[0],lsize);
@@ -179,7 +171,7 @@ public:
     }
     file.close();
     //传输body,设置application/octet-stream表示就是下载文件
->>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
+*/
     res.set_header("Content-Type","application/octet-stream");
     res.status = 200;
 
@@ -194,11 +186,8 @@ public:
     _server.Get("/",GetHostPair);
     _server.Get("/list",GetFileList);
     _server.Get("/list/(.*)",GetFileData);
-<<<<<<< HEAD
-    _server.listen("192.168.244.143",9000);
-=======
     _server.listen("192.168.244.142",9000);
->>>>>>> b0556dbd4a94dd97c38b78dc807a28b9801c170c
+
   }
 };
 
